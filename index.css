@@ -25,6 +25,21 @@ td {
   /* color: rgb(70, 35, 167); */
   color: rgb(70, 35, 167);
 }
+td.mine {
+  color: rgba(70, 35, 167, 0);
+}
+td:hover {
+  background-color: rgb(141, 105, 240);
+  transform: scale(1.15);
+  transition: 0.2s ease-in-out;
+  border: 1.9px solid rgb(141, 105, 240);
+}
+td:not(:hover) {
+  background-color: rgb(70, 35, 167);
+  transform: scale(1);
+  transition: 0.2s ease-in-out;
+  border: 1.9px solid rgb(141, 105, 240);
+}
 td.opened {
   background-color: rgb(195, 173, 255);
 }
