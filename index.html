@@ -4,38 +4,45 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <style>
-      body {
-        background-color: rgb(30, 36, 25);
-        color: rgb(0, 0, 0);
-      }
-      table {
-        border-collapse: collapse;
-      }
-      td {
-        border: 1px solid rgba(255, 0, 0, 0.329);
-        width: 16px;
-        height: 16px;
-        font-size: 0.7px;
-        background-color: rgba(255, 255, 255, 0.144);
-        text-align: center;
-      }
-      td.opened {
-        background-color: rgba(255, 228, 188, 0.739);
-      }
-    </style>
+    <link rel="stylesheet" href="index.css" />
   </head>
 
   <body>
-    <input value="10" type="number" class="hor" placeholder="가로" />
-    <input value="10" type="number" class="ver" placeholder="세로" />
-    <input value="20" type="number" class="mine" placeholder="지뢰" />
-    <span class="exec">GO</span>
+    <input
+      value="10"
+      min=""
+      max=""
+      type="text"
+      class="hor"
+      placeholder="가로"
+    />
+    <input
+      value="10"
+      min=""
+      max=""
+      type="text"
+      class="ver"
+      placeholder="세로"
+    />
+    <input
+      value="15"
+      min="10"
+      max="60"
+      type="text"
+      class="mine"
+      placeholder="지뢰"
+    />
+    <span class="exec" onclick="handleStartAudio.play()">GO</span>
     <table class="table">
       <thead></thead>
       <tbody></tbody>
     </table>
     <span class="result"></span>
+
+    <audio class="boomSound" src="audio/boom.mp3"></audio>
+    <audio class="bikSound" src="audio/bik.mp3"></audio>
+    <audio class="victorySound" src="audio/victory.mp3"></audio>
+    <audio class="failSound" src="audio/fail.mp3"></audio>
     <script src="index.js"></script>
   </body>
 </html>

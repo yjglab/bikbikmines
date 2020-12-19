@@ -1,12 +1,33 @@
+const handleStartAudio = new Audio("audio/bik.mp3");
+const handleBikSound = () => {
+  document.querySelector(".bikSound").play();
+};
+const handleVictorySound = () => {
+  document.querySelector(".victorySound").play();
+};
+const handleFailSound = () => {
+  document.querySelector(".failSound").play();
+};
+
 const tbody = document.querySelector(".table tbody");
 let dataset = [];
 let stopFlag = false;
-
+let opened = 0; // 열은 칸.
+const codeChart = {
+  cOpened: -1,
+  cQst: -2,
+  cFlag: -3,
+  cFlagMine: -4,
+  cQstMine: -5,
+  cMine: 1,
+  cTD: 0,
+};
 document.querySelector(".exec").addEventListener("click", () => {
   tbody.innerHTML = "";
   stopFlag = false;
   document.querySelector(".result").textContent = "";
   dataset = [];
+  opened = 0;
   const hor = parseInt(document.querySelector(".hor").value);
   const ver = parseInt(document.querySelector(".ver").value);
   const mine = parseInt(document.querySelector(".mine").value);
@@ -18,7 +39,7 @@ document.querySelector(".exec").addEventListener("click", () => {
       return index;
     });
   let mineIndexArr = []; // 지뢰를 심을 위치가 담긴 배열.
-  while (candidate.length > 80) {
+  while (candidate.length > hor * ver - mine) {
     let selectMineIndex = candidate.splice(
       Math.floor(Math.random() * candidate.length),
       1
@@ -33,7 +54,7 @@ document.querySelector(".exec").addEventListener("click", () => {
     let tr = document.createElement("tr");
     dataset.push(arr);
     for (let j = 0; j < hor; j++) {
-      arr.push(0);
+      arr.push(codeChart.cTD);
       let td = document.createElement("td");
 
       //---------- 깃발, 물음표 생성
@@ -46,16 +67,33 @@ document.querySelector(".exec").addEventListener("click", () => {
         let PARENT_TBODY = e.currentTarget.parentNode.parentNode;
         let TD = Array.prototype.indexOf.call(PARENT_TR.children, td);
         let TR = Array.prototype.indexOf.call(PARENT_TBODY.children, PARENT_TR);
-        if (td.textContent === "" || td.textContent === "X") {
-          td.textContent = "!";
-        } else if (td.textContent === "!") {
-          td.textContent = "?";
-        } else if (td.textContent === "?") {
-          td.textContent = "";
-          if (dataset[TR][TD] === 1) {
+        if (td.textContent === "" || td.textContent === "◎") {
+          td.textContent = "🚩";
+          td.classList.add("flag");
+          if (dataset[TR][TD] === codeChart.cMine) {
+            dataset[TR][TD] = codeChart.cFlagMine;
+          } else {
+            dataset[TR][TD] = codeChart.cFlag;
+          }
+        } else if (td.textContent === "🚩") {
+          td.textContent = "❔";
+          td.classList.remove("flag");
+          td.classList.add("question");
+
+          if (dataset[TR][TD] === codeChart.cFlagMine) {
+            dataset[TR][TD] = codeChart.cQstMine;
+          } else {
+            dataset[TR][TD] = codeChart.cQst;
+          }
+        } else if (td.textContent === "❔") {
+          td.classList.remove("question");
+
+          if (dataset[TR][TD] === codeChart.cQstMine) {
+            td.textContent = "◎";
+            dataset[TR][TD] = codeChart.cMine;
+          } else {
             td.textContent = "";
-          } else if (dataset[TR][TD] === "X") {
-            td.textContent = "X";
+            dataset[TR][TD] = codeChart.cTD;
           }
         }
       });
@@ -65,15 +103,35 @@ document.querySelector(".exec").addEventListener("click", () => {
         if (stopFlag) {
           return;
         }
+        handleBikSound();
+
         let PARENT_TR = e.currentTarget.parentNode;
         let PARENT_TBODY = e.currentTarget.parentNode.parentNode;
         let TD = Array.prototype.indexOf.call(PARENT_TR.children, td);
         let TR = Array.prototype.indexOf.call(PARENT_TBODY.children, PARENT_TR);
-
+        if (
+          [
+            codeChart.cOpened,
+            codeChart.cFlag,
+            codeChart.cFlagMine,
+            codeChart.cQstMine,
+            codeChart.cQst,
+          ].includes(dataset[TR][TD])
+        ) {
+          return;
+        }
         td.classList.add("opened");
+        opened++;
 
-        if (dataset[TR][TD] === "X") {
-          td.textContent = "펑";
+        if (dataset[TR][TD] === codeChart.cMine) {
+          const handleBoomSound = () => {
+            document.querySelector(".boomSound").play();
+          };
+          handleBoomSound();
+          td.classList.remove("mine");
+
+          td.textContent = "💥"; // boom
+          handleFailSound();
           document.querySelector(".result").textContent = "실패!";
           stopFlag = true;
         } else {
@@ -94,9 +152,14 @@ document.querySelector(".exec").addEventListener("click", () => {
             );
           }
           let aroundMinesNum = around.filter((v) => {
-            return v === "X"; // 주변 지뢰 개수 감지.
+            return [
+              codeChart.cMine,
+              codeChart.cFlagMine,
+              codeChart.cQstMine,
+            ].includes(v); // 주변 지뢰 개수 감지.
           }).length;
           td.textContent = aroundMinesNum || "";
+          dataset[TR][TD] = codeChart.cOpened;
           if (aroundMinesNum === 0) {
             let aroundTD = [];
             if (tbody.children[TR - 1]) {
@@ -130,10 +193,15 @@ document.querySelector(".exec").addEventListener("click", () => {
                   PARENT_TBODY.children,
                   PARENT_TR
                 );
-                if (dataset[sideTR][sideTD] !== 1) {
+                if (dataset[sideTR][sideTD] !== codeChart.cOpened) {
                   side.click();
                 }
               });
+          }
+          if (opened === hor * ver - mine) {
+            stopFlag = true;
+            handleVictorySound();
+            document.querySelector(".result").textContent = "승리!";
           }
         }
       });
@@ -145,10 +213,10 @@ document.querySelector(".exec").addEventListener("click", () => {
 
   //---------- 지뢰 심기
   for (let k = 0; k < mineIndexArr.length; k++) {
-    let verIndex = Math.floor(mineIndexArr[k] / 10);
-    let horIndex = mineIndexArr[k] % 10;
-    tbody.children[verIndex].children[horIndex].textContent = "X";
-    dataset[verIndex][horIndex] = "X";
+    let verIndex = Math.floor(mineIndexArr[k] / ver);
+    let horIndex = mineIndexArr[k] % ver; // 변동금지
+    tbody.children[verIndex].children[horIndex].textContent = "◎";
+    tbody.children[verIndex].children[horIndex].classList.add("mine");
+    dataset[verIndex][horIndex] = codeChart.cMine;
   }
-  console.log(dataset);
 });
