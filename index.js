@@ -86,12 +86,14 @@ document.querySelector(".exec").addEventListener("click", () => {
           td.classList.add("flag");
           if (dataset[TR][TD] === codeChart.cMine) {
             dataset[TR][TD] = codeChart.cFlagMine;
+            td.classList.remove("mine");
           } else {
             dataset[TR][TD] = codeChart.cFlag;
           }
         } else if (td.textContent === "🚩") {
           td.textContent = "❔";
           td.classList.remove("flag");
+
           td.classList.add("question");
 
           if (dataset[TR][TD] === codeChart.cFlagMine) {
@@ -142,9 +144,8 @@ document.querySelector(".exec").addEventListener("click", () => {
             document.querySelector(".boomSound").play();
           };
           handleBoomSound();
-          td.classList.remove("mine");
-
           td.textContent = "💥"; // boom
+          td.classList.remove("mine");
           handleFailSound();
           document.querySelector(".result").textContent = "정말 못하시네요ㅋ";
           stopFlag = true;
