@@ -23,6 +23,7 @@ const codeChart = {
   cTD: 0,
 };
 document.querySelector(".exec").addEventListener("click", () => {
+  document.querySelector(".exec").textContent = "REPLAY";
   tbody.innerHTML = "";
   stopFlag = false;
   document.querySelector(".result").textContent = "";
@@ -31,7 +32,12 @@ document.querySelector(".exec").addEventListener("click", () => {
   const hor = parseInt(document.querySelector(".hor").value);
   const ver = parseInt(document.querySelector(".ver").value);
   const mine = parseInt(document.querySelector(".mine").value);
-
+  if (hor * ver < mine) {
+    document.querySelector(".result").textContent = "지뢰의 수가 너무 많아요!";
+    return;
+  } else {
+    document.querySelector(".result").textContent = "";
+  }
   //---------- 지뢰 랜덤 위치에 생성
   let candidate = Array(hor * ver)
     .fill()
@@ -49,6 +55,14 @@ document.querySelector(".exec").addEventListener("click", () => {
   //----------
 
   //---------- 테이블 생성
+  if (hor !== ver) {
+    document.querySelector(
+      ".result"
+    ).textContent = `가로와 세로의 칸 수를 같게 입력하세요`;
+    return;
+  } else {
+    document.querySelector(".result").textContent = "";
+  }
   for (let i = 0; i < ver; i++) {
     let arr = [];
     let tr = document.createElement("tr");
@@ -132,7 +146,7 @@ document.querySelector(".exec").addEventListener("click", () => {
 
           td.textContent = "💥"; // boom
           handleFailSound();
-          document.querySelector(".result").textContent = "실패!";
+          document.querySelector(".result").textContent = "정말 못하시네요ㅋ";
           stopFlag = true;
         } else {
           dataset[TR][TD] = 1;
@@ -201,7 +215,8 @@ document.querySelector(".exec").addEventListener("click", () => {
           if (opened === hor * ver - mine) {
             stopFlag = true;
             handleVictorySound();
-            document.querySelector(".result").textContent = "승리!";
+            document.querySelector(".result").textContent =
+              "정말 대단하시네요!";
           }
         }
       });

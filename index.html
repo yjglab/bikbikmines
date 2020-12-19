@@ -8,37 +8,58 @@
   </head>
 
   <body>
-    <input
-      value="10"
-      min=""
-      max=""
-      type="text"
-      class="hor"
-      placeholder="가로"
-    />
-    <input
-      value="10"
-      min=""
-      max=""
-      type="text"
-      class="ver"
-      placeholder="세로"
-    />
-    <input
-      value="15"
-      min="10"
-      max="60"
-      type="text"
-      class="mine"
-      placeholder="지뢰"
-    />
-    <span class="exec" onclick="handleStartAudio.play()">GO</span>
-    <table class="table">
-      <thead></thead>
-      <tbody></tbody>
-    </table>
-    <span class="result"></span>
+    <div class="screen-wrapper">
+      <h1>bikbikmines.io💥</h1>
+      <div class="input-wrapper">
+        <div class="input-all-wrapper">
+          <div class="input-in-wrapper">
+            <span class="input-title">가로</span>
+            <input
+              value="10"
+              min="10"
+              max="45"
+              type="text"
+              class="hor"
+              required
+              placeholder="가로"
+            />
+          </div>
+          <div class="input-in-wrapper">
+            <span class="input-title">세로</span>
+            <input
+              value="10"
+              min="10"
+              max="45"
+              type="text"
+              class="ver"
+              required
+              placeholder="세로"
+            />
+          </div>
+          <div class="input-in-wrapper">
+            <span class="input-title">지뢰</span>
+            <input
+              value="15"
+              min="10"
+              max="100"
+              type="text"
+              class="mine"
+              required
+              placeholder="지뢰"
+            />
+          </div>
+          <span class="exec" onclick="handleStartAudio.play()">PLAY</span>
+        </div>
+      </div>
 
+      <div class="table-wrapper">
+        <table class="table">
+          <thead></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="result-wrapper"><span class="result"></span></div>
+    </div>
     <audio class="boomSound" src="audio/boom.mp3"></audio>
     <audio class="bikSound" src="audio/bik.mp3"></audio>
     <audio class="victorySound" src="audio/victory.mp3"></audio>
